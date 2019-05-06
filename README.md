@@ -1,4 +1,4 @@
-#Backlight daemon for TinyPi Pro
+# Backlight daemon for TinyPi Pro
 
 based on [bldaemon-zipit](https://github.com/mozzwald/bldaemon-zipit)
 
@@ -9,7 +9,7 @@ to build this little app. Change `LED_TIMEOUT` in bldaemon.c to
 whatever time you want and recompile with make.
 
 Hardware Modifications Required:
-(see tinypipro_backlight_mosfet.jpg](https://github.com/mozzwald/bldaemon-tinypipro/raw/master/tinypipro_backlight_mosfet.jpg))
+(see [tinypipro_backlight_mosfet.jpg](https://github.com/mozzwald/bldaemon-tinypipro/raw/master/tinypipro_backlight_mosfet.jpg))
 
 P-Channel MOSFET DMP2035U (or similar)
 
