@@ -1,12 +1,11 @@
 /***********************************************************************
- * Backlight daemon for TinyPi Pro 2019-05-05
+ * Backlight daemon for TinyPi Pro 2019-05-06
  *
- * 2010-04-26 Tal Stokes
- * 2012-02-20 mozzwald
- * 2012-03-08 mcmajeres	<mark@engine12.com> -- added seperate timer for keyboard -- works in conjunction with ebindkeys
- * 2012-03-23 mcmajeres	-- changed blanking control to the framebuffer and added posix timers -- still have a polling loop :(
- * 2019-05-05 mozzwald	make it work for the TinyPi Pro by removing a lot.
+ * 2019-05-05 mozzwald	make it work for the TinyPi Pro.
  *			only handles the screen backlight
+ * 2019-05-06 mozzwald	switch to bcm2835 gpio library. the previously
+ *			used pigpio lib was causing issues with the
+ *			sound and the system seemed to run slow
  *
  ***********************************************************************/
 #define _GNU_SOURCE
@@ -25,7 +24,7 @@
 #include <errno.h>
 #include <signal.h>
 
-#include <pigpio.h>
+#include <bcm2835.h>
 
 pthread_t get_keypressed[1];
 int wasKeyPressed = 0;
@@ -38,6 +37,8 @@ typedef unsigned long u32;
 #define SIG SIGALRM
 #define LCD_TIMER  		201
 #define LCD_TIMEOUT  	2500 // 6000 = 60 secs
+
+#define BL_PIN RPI_GPIO_P1_15 // Pin 15 is GPIO 22
 
 /* pthread function to watch for keypresses */
 void* GetKeyPressed(void *arg) {
@@ -85,7 +86,7 @@ static inline void screenOn(){
 		perror("sigprocmask");
 
 	if(bScreenOff){ //turn it back on
-		gpioWrite(22, 0); // 0 = ON
+		bcm2835_gpio_write(BL_PIN, LOW); // LOW is ON
 		bScreenOff = 0;
 	}
 
@@ -95,7 +96,7 @@ static inline void screenOn(){
 }
 
 static inline void screenOff(){
-	gpioWrite(22, 1); // 1 = OFF
+	bcm2835_gpio_write(BL_PIN, HIGH); // HIGH is OFF
 	bScreenOff = 1;
 }
 
@@ -165,11 +166,12 @@ static int set_timer(timer_t timerid, unsigned int freq_msecs)
 
 int main(int argc, char **argv) {
 	/* Setup Pi GPIO */
-	if (gpioInitialise() < 0){
-		fprintf(stderr, "pigpio initialisation failed\n");
+	if (!bcm2835_init()){
+		fprintf(stderr, "bcm2835 gpio initialisation failed\n");
 		return 1;
 	}
-	gpioSetMode(22, PI_OUTPUT);
+
+	bcm2835_gpio_fsel(BL_PIN, BCM2835_GPIO_FSEL_OUTP);
 
 	/* Setup the LCD Timer */
 	lcd_timerid = create_timer(LCD_TIMER, LCD_TIMEOUT);

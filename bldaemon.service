@@ -1,0 +1,12 @@
+[Unit]
+Description=TinyPi Pro Backlight Service
+
+[Service]
+Type=simple
+Restart=always
+User=root
+ExecStartPre=/bin/sleep 10
+ExecStart=/usr/sbin/bldaemon
+
+[Install]
+WantedBy=multi-user.target
