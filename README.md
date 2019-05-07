@@ -33,7 +33,7 @@ Change `LED_TIMEOUT` in bldaemon.c to whatever time you want and
 compile with `make`.
 
 ## Hardware Modifications Required:
-(see tinypipro_backlight_mosfet.jpg](https://github.com/mozzwald/bldaemon-tinypipro/raw/master/tinypipro_backlight_mosfet.jpg))
+(see [tinypipro_backlight_mosfet.jpg](https://github.com/mozzwald/bldaemon-tinypipro/raw/master/tinypipro_backlight_mosfet.jpg))
 
 P-Channel MOSFET DMP2035U (or similar)
 
